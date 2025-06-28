@@ -44,7 +44,21 @@ class BookingSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    responses = serializers.CharField(required=False)
+
     class Meta:
         model = Payment
-        fields = "__all__"
+        fields = [
+            "payment_id",
+            "booking",
+            "booking_reference",
+            "amount",
+            "currenty",
+            "status",
+            "payment_method",
+            "transaction_id",
+            "created_at",
+            "updated_at",
+            "responses",
+        ]
         read_only_fields = ["payment_id", "created_at", "updated_at"]
