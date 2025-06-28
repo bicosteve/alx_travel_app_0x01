@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Listing, Booking
+from .models import Listing, Booking, Payment
 
 
 class ListingSerializer(serializers.ModelSerializer):
@@ -41,3 +41,10 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
         read_only_fields = ["booking_id", "listing", "user"]
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = "__all__"
+        read_only_fields = ["payment_id", "created_at", "updated_at"]

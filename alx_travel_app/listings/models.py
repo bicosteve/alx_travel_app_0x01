@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django_chapa.models import ChapaTransactionMixin
 
 
 class User(models.Model):
@@ -37,21 +38,35 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class Payment(models.Model):
+class Payment(ChapaTransactionMixin):
+    class PaymentStatus(models.TextChoices):
+        PENDING = "pending", "Pending"
+        COMPLETED = "completed", "Completed"
+        FAILED = "failed", "Failed"
+        CANCELLED = "cancelled", "Cancelled"
+
     payment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     booking = models.ForeignKey(
         Booking, on_delete=models.CASCADE, related_name="payments"
     )
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateTimeField(auto_now_add=True)
-    payment_method = models.CharField(
-        max_length=20,
-        choices=[
-            ("credit_card", "Credit Card"),
-            ("paypal", "PayPal"),
-            ("stripe", "Stripe"),
-        ],
+    booking_reference = models.CharField(
+        default=booking.listing.booking_id, editable=False
     )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default="KSH")
+    status = models.CharField(
+        max_length=10, choices=PaymentStatus.choices, default=PaymentStatus.PENDING
+    )
+    payment_method = models.CharField(max_length=50, null=True)
+    transaction_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Payment {self.payment_id}-{self.booking.listing.name}"
+
+    class Meta:
+        swappable = "CHAPA_TRANSACTION_MODEL"
 
 
 class Review(models.Model):

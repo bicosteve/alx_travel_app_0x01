@@ -14,12 +14,14 @@ import os
 import environ
 from pathlib import Path
 
-env = environ.Env()
-environ.Env.read_env("../alx_travel_app/.env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Env variables
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+# environ.Env.read_env("../alx_travel_app/.env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -30,23 +32,38 @@ SECRET_KEY = "django-insecure-p8!w-cyswxnodq_e3(o#&dg3vkc#l6tmo*#zx)^4n986xb&^0o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
 
 # Application definition
-
-INSTALLED_APPS = [
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+THIRD_PARTY_APPS = [
     "rest_framework",
     "corsheaders",
-    "listings",
     "drf_yasg",
 ]
+
+LOCAL_APPS = [
+    "listings",
+]
+
+
+INSTALLED_APPS = (
+    DJANGO_APPS
+    + THIRD_PARTY_APPS
+    + LOCAL_APPS
+    + [
+        "django-chapa",
+    ]
+)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -89,8 +106,8 @@ DATABASES = {
         "NAME": env("MYSQL_DATABASE"),
         "USER": env("MYSQL_USER"),
         "PASSWORD": env("MYSQL_PASSWORD"),
-        "HOST": env("MYSQL_HOST"),
-        "PORT": env("DB_PORT"),
+        "HOST": env("MYSQL_HOST", default="localhost"),
+        "PORT": env("DB_PORT", default="3306"),
     }
 }
 
@@ -147,3 +164,10 @@ REST_FRAMEWOR = {
 """
 Contains global settings for this project
 """
+
+# Chapa Payment Integration
+CHAPA_SECRET_KEY = env("CHAPA_SECRET_KEY")
+CHAPA_API_URL = "https://api.chapa.co"
+CHAPA_API_VERSION = "v1"
+CHAPA_TRANSACTION_MODEL = "listings.Payment"
+CHAPA_WEBHOOK_URL = "/api/chapa-webhook/"

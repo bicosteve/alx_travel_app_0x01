@@ -7,3 +7,4 @@ drf-yasg
 django-cors-headers 
 django-environ
 mysqlclient
+django-chapa
