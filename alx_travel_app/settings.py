@@ -27,7 +27,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-p8!w-cyswxnodq_e3(o#&dg3vkc#l6tmo*#zx)^4n986xb&^0o"
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -171,3 +171,21 @@ CHAPA_API_URL = "https://api.chapa.co"
 CHAPA_API_VERSION = "v1"
 CHAPA_TRANSACTION_MODEL = "listings.Payment"
 CHAPA_WEBHOOK_URL = "/api/chapa-webhook/"
+
+# Celery Configurations
+
+CELERY_BROKER_URL = ""
+CELERY_RESULT_BACKEND = ""
+CELERY_ACCEPTED_CONTNET = "application/json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = ""
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST", default="mailpit")
+EMAIL_PORT = env("EMAIL_PORT", default=1025)
+EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=False)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="test01@alxtravelapp.com")
